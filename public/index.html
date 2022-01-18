@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <input type="file" id="inpFile">
+    <button type="button" id="btnUpload">Upload Your Pdf File</button>
+    <br><br>
+    <textarea style="width: 700px; height: 150px;" id="resultText" placeholder="Your PDF text will appear here..."></textarea>
+    <h2>Sorgu 1 ve 2 Bilgileri </h2>
+    <p id="isim"></p>
+    <p id="keyWords"></p>
+    <p id="donem"></p>
+    <p id="baslik"></p>
+    <p id="danisman"></p>
+    <p id="juri"></p>
+
+
+    <script>
+        const btnUpload = document.getElementById("btnUpload");
+        const inpFile = document.getElementById("inpFile");
+        const resultText = document.getElementById("resultText");
+
+        btnUpload.addEventListener("click", () => {
+            const formData = new FormData();
+            var isim, keyWords, donem, baslik, danisman, juri;
+
+            formData.append("pdfFile", inpFile.files[0]);
+
+            fetch("/extract-text", {
+                method: "post",
+                body: formData
+            }).then(response => {
+                return response.text();
+            }).then(extractedText => {
+                resultText.value = extractedText;
+                let dizi = extractedText.split("\n")
+                isim = dizi[19];
+                donem = dizi[25];
+                baslik = dizi[14];
+                danisman = dizi[37];
+                juri = dizi[40];
+                keyWords = dizi[268] + dizi[269];
+                keyWords = keyWords.split(", ");
+                keyWords[0] = keyWords[0].slice(20);
+                document.getElementById("isim").innerText = "isim : " + isim;
+                document.getElementById("donem").innerText = "dönem : " + donem;
+                document.getElementById("baslik").innerText = "başlık & konu : " + baslik;
+                document.getElementById("danisman").innerText = "danışman : " + danisman;
+                document.getElementById("juri").innerText = "jüri : " + juri;
+                document.getElementById("keyWords").innerText = "anahtar kelimeler : " + keyWords;
+
+            })
+        })
+    </script>
+
+</body>
+
+</html>

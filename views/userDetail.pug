@@ -1,0 +1,7 @@
+.card(style='width: 18rem;')
+  .card-body
+    each user in allUser
+
+      h5.card-title #{user.name}
+      a.btn.btn-primary(href=`http://localhost:3000/deleteUser/${user._id}`) sil
+      a.btn.btn-primary(href=`http://localhost:3000/updateUser/${user._id}`) güncelle
